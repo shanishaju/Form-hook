@@ -1,7 +1,6 @@
 // npm install react-hook-form step 1
 
 import * as React from 'react';
-import Paper from '@mui/material/Paper';
 import './App.css';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form'; // step2:import useForm ()
@@ -10,19 +9,21 @@ import { useForm } from 'react-hook-form'; // step2:import useForm ()
 
 function App() {
   const {
-    register,  // register function is used to register the form inputs to react-hook-form for validation and form state management.
-    handleSubmit,
-    formState: { errors }, // Extract errors
+    register,  // register function is used to register the form inputs to react-hook-form for validation and form state management. or track input values automatically
+    handleSubmit, // handleSubmit function is used to handle form submission
+    formState:  // formState object contains the form state, including errors, touched fields, and form validation state
+    { errors, isSubmitting },  // Extract errors // isSubmitting tracks the form submission state, used to disable the submit button and show loading text during submission
     watch //  Import watch
   } = useForm();
 
   // Step 4: Define onSubmit function
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     console.log("Form Data:", data);
   };
 
   // Watching form values for live preview
-  const formValues = watch(); 
+  const formValues = watch();
 
   return (
     <>
@@ -57,7 +58,16 @@ function App() {
             type="email"
             variant="outlined"
             margin="normal"
-            {...register("email", { required: "Email is required" })}
+            {...register("email", {
+              required: "Email is required",
+              validate: (value) => {
+                if (!value.includes('@')) {
+                  return 'Invalid email address';
+                }
+                return true;
+              }
+            })}
+
           />
           {errors.email && <Typography color="error">{errors.email.message}</Typography>}
 
@@ -68,12 +78,12 @@ function App() {
             margin="normal"
             type='number'
             {...register("phoneNumber", {
-               required: "Phone number is required",
-               pattern: {
+              required: "Phone number is required",
+              pattern: {
                 value: /^[0-9]{10}$/,
                 message: "Invalid phone number",
               },
-            })} 
+            })}
           />
           {errors.phoneNumber && <Typography color="error">{errors.phoneNumber.message}</Typography>}
 
@@ -83,24 +93,25 @@ function App() {
             variant="outlined"
             margin="normal"
             type='password'
-            {...register("password", {  
+            {...register("password", {
               required: "Password is required",
               minLength: {
                 value: 8,
                 message: "Password must be at least 8 characters",
               },
-            })} 
+            })}
           />
           {errors.password && <Typography color="error">{errors.password.message}</Typography>}
 
           <Button
+            disabled={isSubmitting}  // Prevent multiple submissions
             variant="contained"
             color="primary"
             type="submit"
             fullWidth
             sx={{ mt: 2 }}
           >
-            Submit
+            {isSubmitting ? 'Loading...' : 'Submit'}
           </Button>
 
           {/* Live preview of input values */}
