@@ -6,13 +6,7 @@ import './App.css';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form'; // step2:import useForm ()
 
-// function Item({ children }) {
-//   return (
-//     <Paper sx={{ padding: 2, textAlign: 'center' }}>
-//       <Typography>{children}</Typography>
-//     </Paper>
-//   );
-// }
+
 
 function App() {
   const {
